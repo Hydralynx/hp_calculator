@@ -4,6 +4,7 @@
 Calculator::Calculator()
 {
     m_enterFlag = false;
+    m_operatorFlag = false;
 }
 
 Calculator::~Calculator()
@@ -14,6 +15,7 @@ bool Calculator::pushNumber(const double number)
 {
     m_stack.push(number);
     m_enterFlag = true;
+    m_operatorFlag = false;
 
     return true;
 }
@@ -40,6 +42,8 @@ std::string Calculator::divide()
 
     m_stack.push(result);
 
+    m_operatorFlag = true;
+
     return std::to_string(result);
 }
 
@@ -60,6 +64,8 @@ std::string Calculator::multiply()
     result = lVal * rVal;
 
     m_stack.push(result);
+
+    m_operatorFlag = true;
 
     return std::to_string(result);
 }
@@ -82,6 +88,8 @@ std::string Calculator::add()
 
     m_stack.push(result);
 
+    m_operatorFlag = true;
+
     return std::to_string(result);
 }
 
@@ -103,6 +111,8 @@ std::string Calculator::substract()
 
     m_stack.push(result);
 
+    m_operatorFlag = true;
+
     return std::to_string(result);
 }
 
@@ -119,6 +129,28 @@ std::string Calculator::square()
     result = Val * Val;
 
     m_stack.push(result);
+
+    m_operatorFlag = true;
+
+    return std::to_string(result);
+}
+
+std::string Calculator::percent()
+{
+    // Si pas assez d'opérandes dans la pile
+    if (m_stack.empty())
+        return "ERROR";
+
+    double Val, result;
+
+    Val = m_stack.top();
+    m_stack.pop();
+
+    result = Val / 100;
+
+    m_stack.push(result);
+
+    m_operatorFlag = true;
 
     return std::to_string(result);
 }
@@ -157,12 +189,22 @@ std::string Calculator::addToTop(const double number)
     return std::to_string(m_stack.top());
 }
 
-bool Calculator::flagEnabled()
+bool Calculator::enterFlagEnabled()
 {
     return m_enterFlag;
 }
 
-bool Calculator::flagDisable()
+void Calculator::enterFlagDisable()
 {
     m_enterFlag = false;
+}
+
+bool Calculator::operatorFlagEnabled()
+{
+    return m_operatorFlag;
+}
+
+void Calculator::operatorFlagDisable()
+{
+    m_operatorFlag = false;
 }

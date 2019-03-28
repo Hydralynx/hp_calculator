@@ -1,4 +1,7 @@
-// wxWidgets "Hello World" Program
+#define INTERFACE_MAIN
+#ifndef INTERFACE_MAIN
+//Mettre en commentaire le define pour éviter les conflits de main hors des tests
+#else
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "interface.hpp"
 #include "calculator.h"
@@ -16,15 +19,15 @@ bool MyApp::OnInit()
 {   
     // Création de l'objet calculatrice
 	// Création de la fenetre avec définition de la Taille et positionnement de la fenetre sur l'écran
-    MyFrame *frame = new MyFrame("RPN Calculator", wxPoint(50, 50), wxSize(370, 188) );
-	
+    //MyFrame *frame = new MyFrame("RPN Calculator", wxPoint(50, 50), wxSize(370, 165), wxDEFAULT_FRAME_STYLE & ~(wxRESIZE_BORDER));
+    MyFrame *frame = new MyFrame("RPN Calculator", wxPoint(50, 50), wxSize(370, 165));
 	// Fonction permettant d'afficher la fenêtre
     frame->Show(true);
     return true;
 }
 
-MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size) 
-: wxFrame(NULL, wxID_ANY, title, pos, size)
+MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+: wxFrame(NULL, wxID_ANY, title, pos, size, style)
 {
     wxMenu *menuHelp = new wxMenu;
     menuHelp->Append(wxID_ABOUT);
@@ -95,9 +98,8 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	
 	// Création de la zone wxTextCtrl permettant d'afficher et de récupérer les valeurs
 	// avec une taille et une position fixe dans la fenêtre
-    BoxResult = new wxTextCtrl(this,wxID_ANY, wxT("0"), wxPoint(5,-70),wxSize(360, 180));
+    BoxResult = new wxTextCtrl(this,wxID_ANY, wxT("0"), wxPoint(5,-70),wxSize(360, 180), wxTE_RIGHT);
     BoxResult->SetEditable(false); //On rend la zone de texte non editable au clavier
-    BoxResult->SetDefaultStyle(wxTextAttr(wxTE_RIGHT));
 	
 	btn0->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_0_Clicked),NULL, this);
     btn1->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_1_Clicked),NULL, this);
@@ -158,31 +160,30 @@ void MyFrame::OnHello(wxCommandEvent& event)
 
 void MyFrame::Touche_FOIS_Clicked(wxCommandEvent &event)
 {
-    // OBJECTIF : capturer le nombre dans l'afficheur pour l'empiler, calculer et afficher le résultat de la multiplication en mémoire
+    // Si on n'a pas fait d'opération juste avant
+    if (!my_calc.operatorFlagEnabled())
+    {
+        // On convertit la wxString en string standard
+        wxString temp_wxstring(BoxResult->GetValue());
+        std::string stlstring = std::string(temp_wxstring.mb_str());
 
-    // On convertit la wxString en string standard
-    wxString temp_wxstring(BoxResult->GetValue());
-    std::string stlstring = std::string(temp_wxstring.mb_str());
-
-    // On transforme la string en double et on l'empile dans my_calc
-    double number = stod(stlstring, NULL);
-    my_calc.pushNumber(number);
-
+        // On transforme la string en double et on l'empile dans my_calc
+        double number = stod(stlstring, NULL);
+        my_calc.pushNumber(number);
+    }
     BoxResult->Clear();
     BoxResult->AppendText(my_calc.multiply());
 }
 
 void MyFrame::Touche_DIV_Clicked(wxCommandEvent &event)
 {
-    // OBJECTIF : capturer le nombre dans l'afficheur pour l'empiler, calculer et afficher le résultat de la division en mémoire
-
-    // On convertit la wxString en string standard
-    wxString temp_wxstring(BoxResult->GetValue());
-    std::string stlstring = std::string(temp_wxstring.mb_str());
-
-    // On transforme la string en double et on l'empile dans my_calc
-    double number = stod(stlstring, NULL);
-    my_calc.pushNumber(number);
+    if (!my_calc.operatorFlagEnabled())
+    {
+        wxString temp_wxstring(BoxResult->GetValue());
+        std::string stlstring = std::string(temp_wxstring.mb_str());
+        double number = stod(stlstring, NULL);
+        my_calc.pushNumber(number);
+    }
 
     BoxResult->Clear();
     BoxResult->AppendText(my_calc.divide());
@@ -190,15 +191,13 @@ void MyFrame::Touche_DIV_Clicked(wxCommandEvent &event)
 
 void MyFrame::Touche_PLUS_Clicked(wxCommandEvent &event)
 {
-    // OBJECTIF : capturer le nombre dans l'afficheur pour l'empiler, calculer et afficher le résultat de l'addition en mémoire
-
-    // On convertit la wxString en string standard
-    wxString temp_wxstring(BoxResult->GetValue());
-    std::string stlstring = std::string(temp_wxstring.mb_str());
-
-    // On transforme la string en double et on l'empile dans my_calc
-    double number = stod(stlstring, NULL);
-    my_calc.pushNumber(number);
+    if (!my_calc.operatorFlagEnabled())
+    {
+        wxString temp_wxstring(BoxResult->GetValue());
+        std::string stlstring = std::string(temp_wxstring.mb_str());
+        double number = stod(stlstring, NULL);
+        my_calc.pushNumber(number);
+    }
 
     BoxResult->Clear();
     BoxResult->AppendText(my_calc.add());
@@ -206,15 +205,13 @@ void MyFrame::Touche_PLUS_Clicked(wxCommandEvent &event)
 
 void MyFrame::Touche_MOINS_Clicked(wxCommandEvent &event)
 {
-    // OBJECTIF : capturer le nombre dans l'afficheur pour l'empiler, calculer et afficher le résultat de la soustraction en mémoire
-
-    // On convertit la wxString en string standard
-    wxString temp_wxstring(BoxResult->GetValue());
-    std::string stlstring = std::string(temp_wxstring.mb_str());
-
-    // On transforme la string en double et on l'empile
-    double number = stod(stlstring, NULL);
-    my_calc.pushNumber(number);
+    if (!my_calc.operatorFlagEnabled())
+    {
+        wxString temp_wxstring(BoxResult->GetValue());
+        std::string stlstring = std::string(temp_wxstring.mb_str());
+        double number = stod(stlstring, NULL);
+        my_calc.pushNumber(number);
+    }
 
     BoxResult->Clear();
     BoxResult->WriteText(my_calc.substract());
@@ -222,15 +219,13 @@ void MyFrame::Touche_MOINS_Clicked(wxCommandEvent &event)
 
 void MyFrame::Touche_PUISS2_Clicked(wxCommandEvent &event)
 {
-    // OBJECTIF : capturer le nombre dans l'afficheur pour l'empiler et calculer son carré
-
-    // On convertit la wxString en string standard
-    wxString temp_wxstring(BoxResult->GetValue());
-    std::string stlstring = std::string(temp_wxstring.mb_str());
-
-    // On transforme la string en double et on l'empile
-    double number = stod(stlstring, NULL);
-    my_calc.pushNumber(number);
+    if (!my_calc.operatorFlagEnabled())
+    {
+        wxString temp_wxstring(BoxResult->GetValue());
+        std::string stlstring = std::string(temp_wxstring.mb_str());
+        double number = stod(stlstring, NULL);
+        my_calc.pushNumber(number);
+    }
 
     BoxResult->Clear();
     BoxResult->WriteText(my_calc.square());
@@ -238,11 +233,24 @@ void MyFrame::Touche_PUISS2_Clicked(wxCommandEvent &event)
 
 void MyFrame::Touche_PI_Clicked(wxCommandEvent &event)
 {
-    BoxResult->WriteText(std::to_string(3.141592));
+    BoxResult->Clear();
+    BoxResult->AppendText(std::to_string(3.141592));
+    my_calc.enterFlagDisable();
+    my_calc.operatorFlagDisable();
 }
 
 void MyFrame::Touche_POURCENT_Clicked(wxCommandEvent &event)
 {
+    if (!my_calc.operatorFlagEnabled())
+    {
+        wxString temp_wxstring(BoxResult->GetValue());
+        std::string stlstring = std::string(temp_wxstring.mb_str());
+        double number = stod(stlstring, NULL);
+        my_calc.pushNumber(number);
+    }
+
+    BoxResult->Clear();
+    BoxResult->WriteText(my_calc.percent());
 }
 
 ////*-_-_-_-_-_-_-_-_-_-_-* BOUTON CHIFFRE *-_-_-_-_-_-_-_-_-_-_-*//
@@ -252,103 +260,119 @@ void MyFrame::Touche_0_Clicked(wxCommandEvent &event)
     if (BoxResult->GetValue() == "0")
         return;
 
-    if (my_calc.flagEnabled())
+    if (my_calc.enterFlagEnabled())
         BoxResult->Clear();
 
     BoxResult->AppendText("0");
-    my_calc.flagDisable();
+    my_calc.enterFlagDisable();
+    my_calc.operatorFlagDisable();
 }
 
 void MyFrame::Touche_1_Clicked(wxCommandEvent &event)
 {
-    if (BoxResult->GetValue() == "0" || my_calc.flagEnabled())
+    if (BoxResult->GetValue() == "0" || my_calc.enterFlagEnabled())
         BoxResult->Clear();
 
     BoxResult->AppendText("1");
-    my_calc.flagDisable();
+    my_calc.enterFlagDisable();
+    my_calc.operatorFlagDisable();
 }
 
 void MyFrame::Touche_2_Clicked(wxCommandEvent &event)
 {
-    if (BoxResult->GetValue() == "0" || my_calc.flagEnabled())
+    if (BoxResult->GetValue() == "0" || my_calc.enterFlagEnabled())
         BoxResult->Clear();
 
     BoxResult->AppendText("2");
-    my_calc.flagDisable();
+    my_calc.enterFlagDisable();
+    my_calc.operatorFlagDisable();
 }
 
 void MyFrame::Touche_3_Clicked(wxCommandEvent &event)
 {
-    if (BoxResult->GetValue() == "0" || my_calc.flagEnabled())
+    if (BoxResult->GetValue() == "0" || my_calc.enterFlagEnabled())
         BoxResult->Clear();
 
     BoxResult->AppendText("3");
-    my_calc.flagDisable();
+    my_calc.enterFlagDisable();
+    my_calc.operatorFlagDisable();
 }
 
 void MyFrame::Touche_4_Clicked(wxCommandEvent &event)
 {
-    if (BoxResult->GetValue() == "0" || my_calc.flagEnabled())
+    if (BoxResult->GetValue() == "0" || my_calc.enterFlagEnabled())
         BoxResult->Clear();
 
     BoxResult->AppendText("4");
-    my_calc.flagDisable();
+    my_calc.enterFlagDisable();
+    my_calc.operatorFlagDisable();
 }
 
 void MyFrame::Touche_5_Clicked(wxCommandEvent &event)
 {
-    if (BoxResult->GetValue() == "0" || my_calc.flagEnabled())
+    if (BoxResult->GetValue() == "0" || my_calc.enterFlagEnabled())
         BoxResult->Clear();
 
     BoxResult->AppendText("5");
-    my_calc.flagDisable();
+    my_calc.enterFlagDisable();
+    my_calc.operatorFlagDisable();
 }
 
 void MyFrame::Touche_6_Clicked(wxCommandEvent &event)
 {
-    if (BoxResult->GetValue() == "0" || my_calc.flagEnabled())
+    if (BoxResult->GetValue() == "0" || my_calc.enterFlagEnabled())
         BoxResult->Clear();
 
     BoxResult->AppendText("6");
-    my_calc.flagDisable();
+    my_calc.enterFlagDisable();
+    my_calc.operatorFlagDisable();
 }
 
 void MyFrame::Touche_7_Clicked(wxCommandEvent &event)
 {
-    if (BoxResult->GetValue() == "0" || my_calc.flagEnabled())
+    if (BoxResult->GetValue() == "0" || my_calc.enterFlagEnabled())
         BoxResult->Clear();
 
     BoxResult->AppendText("7");
-    my_calc.flagDisable();
+    my_calc.enterFlagDisable();
+    my_calc.operatorFlagDisable();
 }
 
 void MyFrame::Touche_8_Clicked(wxCommandEvent &event)
 {
-    if (BoxResult->GetValue() == "0" || my_calc.flagEnabled())
+    if (BoxResult->GetValue() == "0" || my_calc.enterFlagEnabled())
         BoxResult->Clear();
     BoxResult->AppendText("8");
-    my_calc.flagDisable();
+    my_calc.enterFlagDisable();
+    my_calc.operatorFlagDisable();
 }
 
 void MyFrame::Touche_9_Clicked(wxCommandEvent &event)
 {
-    if (BoxResult->GetValue() == "0" || my_calc.flagEnabled())
+    if (BoxResult->GetValue() == "0" || my_calc.enterFlagEnabled())
         BoxResult->Clear();
 
     BoxResult->AppendText("9");
-    my_calc.flagDisable();
+    my_calc.enterFlagDisable();
+    my_calc.operatorFlagDisable();
 }
 
 void MyFrame::Touche_VIRGULE_Clicked(wxCommandEvent &event)
 {
-    if (my_calc.flagEnabled())
-    {
-        BoxResult->Clear();
-        BoxResult->AppendText("0");
-    }
+    wxString sTemp = BoxResult->GetValue();
 
-    BoxResult->AppendText(".");
-    my_calc.flagDisable();
+    if (sTemp.Find(".") == wxNOT_FOUND)
+    {
+            if (my_calc.enterFlagEnabled())
+            {
+                BoxResult->Clear();
+                BoxResult->AppendText("0");
+            }
+
+            BoxResult->AppendText(".");
+            my_calc.enterFlagDisable();
+            my_calc.operatorFlagDisable();
+    }
 }
 
 
@@ -358,25 +382,28 @@ void MyFrame::Touche_MC_Clicked(wxCommandEvent &event)
 {
     // OBJECTIF : vider la pile mémoire de Calculator
 
+    if (BoxResult->GetValue() == "ERROR")
+        BoxResult->Clear();
+
     my_calc.flushStack();
+
+    my_calc.enterFlagDisable();
+    my_calc.operatorFlagDisable();
 }
 
 void MyFrame::Touche_MPLUS_Clicked(wxCommandEvent &event)
 {
-    // OBJECTIF : capturer le nombre dans l'afficheur pour l'ajouter au nombre du haut de la pile
-
-    // On convertit la wxString en string standard
     wxString temp_wxstring(BoxResult->GetValue());
     std::string stlstring = std::string(temp_wxstring.mb_str());
-
-    // On transforme la string en double et on l'ajoute au dernier nombre en mémoire
     double number = stod(stlstring, NULL);
     my_calc.addToTop(number);
+    BoxResult->Clear();
+    my_calc.displayTop();
 }
 
 void MyFrame::Touche_MR_Clicked(wxCommandEvent &event)
 {
-    //OBJECTIF : afficher le dernier nombre en mémoire dans la pile
+    // Afficher le dernier nombre en mémoire
     BoxResult->Clear();
     BoxResult->AppendText(my_calc.displayTop());
 }
@@ -386,8 +413,10 @@ void MyFrame::Touche_MR_Clicked(wxCommandEvent &event)
 void MyFrame::Touche_DEL_Clicked(wxCommandEvent &event)
 {
     // OBJECTIF : effacer le dernier caractère tapé
-
-    BoxResult->Undo();
+    wxString sTemp = BoxResult->GetValue();
+    sTemp.RemoveLast();
+    BoxResult->Clear();
+    BoxResult->AppendText(sTemp);
 }
 
 void MyFrame::Touche_CLEAR_Clicked(wxCommandEvent &event)
@@ -395,6 +424,7 @@ void MyFrame::Touche_CLEAR_Clicked(wxCommandEvent &event)
     // OBJECTIF : réinitialiser la zone d'affichage sans toucher à la mémoire
     BoxResult->Clear();
     BoxResult->AppendText("0");
+    my_calc.operatorFlagDisable();
 }
 
 void MyFrame::Touche_ENTER_Clicked(wxCommandEvent &event)
@@ -402,10 +432,16 @@ void MyFrame::Touche_ENTER_Clicked(wxCommandEvent &event)
     // OBJECTIF : capturer le nombre dans l'afficheur pour l'empiler dans Calculator
 
     // On convertit la wxString en string standard
-    wxString temp_wxstring(BoxResult->GetValue());
-    std::string stlstring = std::string(temp_wxstring.mb_str());
+    if (BoxResult->GetValue() != "ERROR")
+    {
+        wxString temp_wxstring(BoxResult->GetValue());
+        std::string stlstring = std::string(temp_wxstring.mb_str());
 
-    // On transforme la string en double et on l'empile
-    double number = stod(stlstring, NULL);
-    my_calc.pushNumber(number);
+        // On transforme la string en double et on l'empile
+        double number = stod(stlstring, NULL);
+        my_calc.pushNumber(number);
+    }
+
 }
+
+#endif

@@ -1,8 +1,8 @@
-#define CATCH_CONFIG_MAIN
+//#define CATCH_CONFIG_MAIN
 #ifndef CATCH_CONFIG_MAIN
 //Mettre en commentaire le define pour éviter les conflits de main hors des tests
 #else
-#include "catch.hpp"
+#include "../inc/test/catch.hpp"
 #include "calculator.h"
 
 using namespace std;
@@ -174,6 +174,35 @@ TEST_CASE("Test fonction rappel", "[Calculator][displayTop")
     }
 }
 
+TEST_CASE("Test fonction M+", "[Calculator][addToTop]")
+{
+    Calculator test_calc;
+
+    REQUIRE(test_calc.isInitialized());
+
+    SECTION("Addition du nombre affiché avec le haut de la pile")
+    {
+        test_calc.pushNumber(2);
+        test_calc.addToTop(2);
+        CHECK(test_calc.square() == "16.000000");
+        test_calc.flushStack();
+    }
+
+    SECTION("Essai avec calculs")
+    {
+        test_calc.pushNumber(-2);
+        test_calc.addToTop(3);
+        test_calc.pushNumber(6);
+
+        CHECK(test_calc.add() == "7.000000");
+    }
+
+    SECTION("Essai avec pile vide")
+    {
+        CHECK(test_calc.addToTop(2) == "ERROR");
+    }
+}
+
 TEST_CASE("Simulation de calculs")
 {
     Calculator test_calc;
@@ -190,15 +219,32 @@ TEST_CASE("Simulation de calculs")
         test_calc.multiply();
 
         CHECK(test_calc.substract() == "-14.000000");
+        test_calc.flushStack();
     }
-}
 
-TEST_CASE("Test fonction M+", "[Calculator][addToTop]")
-{
-    Calculator test_calc;
+    SECTION("Séquence : 10 0 2 - *")
+    {
+        test_calc.pushNumber(10);
+        test_calc.pushNumber(0);
+        test_calc.pushNumber(2);
+        REQUIRE(test_calc.substract() == "-2.000000");
+        CHECK(test_calc.multiply() == "-20.000000");
+        test_calc.flushStack();
+    }
 
-    REQUIRE(test_calc.isInitialized());
-
-    SECTION("Ajouter d'un nombre sur pile")
+    SECTION("Séquence : 25 8 2 4 12 + * - + 5 /")
+    {
+        test_calc.pushNumber(25);
+        test_calc.pushNumber(8);
+        test_calc.pushNumber(2);
+        test_calc.pushNumber(4);
+        test_calc.pushNumber(12);
+        REQUIRE(test_calc.add() == "16.000000");
+        REQUIRE(test_calc.multiply() == "32.000000");
+        REQUIRE(test_calc.substract() == "-24.000000");
+        REQUIRE(test_calc.add() == "1.000000");
+        test_calc.pushNumber(5);
+        CHECK(test_calc.divide() == "0.200000");
+    }
 }
 #endif

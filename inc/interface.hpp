@@ -12,7 +12,7 @@ public:
 class MyFrame : public wxFrame
 {
 public:
-    MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
+    MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size, long style = wxDEFAULT_FRAME_STYLE);
     ~MyFrame();
 
 protected:
