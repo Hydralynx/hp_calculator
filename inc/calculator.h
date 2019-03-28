@@ -9,6 +9,7 @@ class Calculator
 {
 public:
     Calculator();
+    ~Calculator();
     std::string divide();
     std::string multiply();
     std::string add();
@@ -17,7 +18,6 @@ public:
     std::string displayTop();
     bool pushNumber(const double number);
     bool isInitialized();
-    bool deleteNumber();
     void flushStack();
 private:
     std::stack<double> m_stack;
