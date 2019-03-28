@@ -1,4 +1,7 @@
 #define CATCH_CONFIG_MAIN
+#ifndef CATCH_CONFIG_MAIN
+//Mettre en commentaire le define pour éviter les conflits de main hors des tests
+#else
 #include "catch.hpp"
 #include "calculator.h"
 
@@ -177,7 +180,7 @@ TEST_CASE("Simulation de calculs")
 
     REQUIRE(test_calc.isInitialized());
 
-    SECTION(" Séquence : 2 3 * 4 5 * -")
+    SECTION("Séquence : 2 3 * 4 5 * -")
     {
         test_calc.pushNumber(2);
         test_calc.pushNumber(3);
@@ -189,3 +192,13 @@ TEST_CASE("Simulation de calculs")
         CHECK(test_calc.substract() == "-14.000000");
     }
 }
+
+TEST_CASE("Test fonction M+", "[Calculator][addToTop]")
+{
+    Calculator test_calc;
+
+    REQUIRE(test_calc.isInitialized());
+
+    SECTION("Ajouter d'un nombre sur pile")
+}
+#endif

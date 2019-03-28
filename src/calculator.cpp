@@ -3,11 +3,17 @@
 
 Calculator::Calculator()
 {
+    m_enterFlag = false;
+}
+
+Calculator::~Calculator()
+{
 }
 
 bool Calculator::pushNumber(const double number)
 {
     m_stack.push(number);
+    m_enterFlag = true;
 
     return true;
 }
@@ -139,3 +145,24 @@ std::string Calculator::displayTop()
     return std::to_string(m_stack.top());
 }
 
+std::string Calculator::addToTop(const double number)
+{
+    if (m_stack.empty())
+        return "ERROR";
+
+    double nb_temp = m_stack.top();
+    m_stack.pop();
+    m_stack.push(nb_temp + number);
+
+    return std::to_string(m_stack.top());
+}
+
+bool Calculator::flagEnabled()
+{
+    return m_enterFlag;
+}
+
+bool Calculator::flagDisable()
+{
+    m_enterFlag = false;
+}

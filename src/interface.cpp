@@ -1,13 +1,20 @@
 // wxWidgets "Hello World" Program
 // For compilers that support precompilation, includes "wx/wx.h".
-#include <Interface.hpp>
+#include "interface.hpp"
+#include "calculator.h"
+#include <string>
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
     #include <wx/wx.h>
 #endif
 
+using namespace std;
+
+Calculator my_calc;
+
 bool MyApp::OnInit()
 {   
+    // Création de l'objet calculatrice
 	// Création de la fenetre avec définition de la Taille et positionnement de la fenetre sur l'écran
     MyFrame *frame = new MyFrame("RPN Calculator", wxPoint(50, 50), wxSize(370, 188) );
 	
@@ -19,29 +26,18 @@ bool MyApp::OnInit()
 MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size) 
 : wxFrame(NULL, wxID_ANY, title, pos, size)
 {
-    wxMenu *menuFile = new wxMenu;
-    menuFile->Append(ID_Hello, "&Hello...\tCtrl-H",
-                     "Help string shown in status bar for this menu item");
-
-    menuFile->AppendSeparator();
-    menuFile->Append(wxID_EXIT);
-    
     wxMenu *menuHelp = new wxMenu;
     menuHelp->Append(wxID_ABOUT);
     
     wxMenuBar *menuBar = new wxMenuBar;
-    menuBar->Append(menuFile, "&File");
-    menuBar->Append(menuHelp, "&Help");
-    
-    SetMenuBar( menuBar );
-    CreateStatusBar(2 ,wxID_ANY);
 
-    SetStatusText("Welcome to wxWidgets!");
+    menuBar->Append(menuHelp, "&Help");
+
+    SetMenuBar( menuBar );
 
     Bind(wxEVT_MENU, &MyFrame::OnHello, this, ID_Hello);
     Bind(wxEVT_MENU, &MyFrame::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
-    Bind(wxEVT_BUTTON, &MyFrame::Touche_0_Clicked, this, ID_BT_0);
 
     // Création des boutons avec définition de la Taille et positionnement des boutons par rapport aux autres
 	// Largeur bouton : 60, Hauteur : 27, Largeur entre les boutons : 5
@@ -52,7 +48,7 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	 btnPlus = new wxButton(this, ID_BT_PLUS, _T("+"), wxPoint(5+2*60, 133),wxSize(60, 27));
 	 btn0 = new wxButton(this, ID_BT_0, _T("0"), wxPoint(5+3*60, 133),wxSize(60, 27));
 	 btnVirgule = new wxButton(this, ID_BT_VIRGULE, _T(","), wxPoint(5+4*60, 133),wxSize(60, 27));
-	 btnEgale = new wxButton(this, ID_BT_EGALE, _T("="), wxPoint(5+5*60, 133),wxSize(60, 27));
+     btnEnter = new wxButton(this, ID_BT_ENTER, _T("ENTER"), wxPoint(5+5*60, 133),wxSize(60, 27));
 
 	
 	// Ligne 3/4 par rapport aux boutons
@@ -79,11 +75,11 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	 btn8 = new wxButton(this, ID_BT_8, _T("8"), wxPoint(5+4*60, 133-3*32),wxSize(60, 27));
 	 btn9 = new wxButton(this, ID_BT_9, _T("9"), wxPoint(5+5*60, 133-3*32),wxSize(60, 27));
 	
-		btnPlus->SetBackgroundColour(wxColour(250, 164, 1,100));
+        btnPlus->SetBackgroundColour(wxColour(250, 164, 1,100));
 		btnFois->SetBackgroundColour(wxColour(250, 164, 1,100));
 		btnMoins->SetBackgroundColour(wxColour(250, 164, 1,100));
 		btnDiviser->SetBackgroundColour(wxColour(250, 164, 1,100));
-		btnEgale->SetBackgroundColour(wxColour(255, 0, 0,70));
+        btnEnter->SetBackgroundColour(wxColour(255, 0, 0,70));
 		btnClr->SetBackgroundColour(wxColour(187, 210, 225,70));
 		btnDel->SetBackgroundColour(wxColour(255, 0, 0,70));
 		btnMR->SetBackgroundColour(wxColour(187, 210, 225,70));
@@ -99,19 +95,49 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	
 	// Création de la zone wxTextCtrl permettant d'afficher et de récupérer les valeurs
 	// avec une taille et une position fixe dans la fenêtre
-	
-	// Création de la zone wxTextCtrl permettant d'afficher et de récupérer les valeurs
-	// avec une taille et une position fixe dans la fenêtre
-    BoxResult = new wxTextCtrl(this,wxID_ANY, wxT(""), wxPoint(5,-70),wxSize(360, 180));
-    BoxResult->SetEditable(false); //On rend la zone de text non editable au clavier
+    BoxResult = new wxTextCtrl(this,wxID_ANY, wxT("0"), wxPoint(5,-70),wxSize(360, 180));
+    BoxResult->SetEditable(false); //On rend la zone de texte non editable au clavier
+    BoxResult->SetDefaultStyle(wxTextAttr(wxTE_RIGHT));
 	
 	btn0->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_0_Clicked),NULL, this);
-    
+    btn1->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_1_Clicked),NULL, this);
+    btn2->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_2_Clicked),NULL, this);
+    btn3->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_3_Clicked),NULL, this);
+    btn4->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_4_Clicked),NULL, this);
+    btn5->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_5_Clicked),NULL, this);
+    btn6->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_6_Clicked),NULL, this);
+    btn7->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_7_Clicked),NULL, this);
+    btn8->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_8_Clicked),NULL, this);
+    btn9->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_9_Clicked),NULL, this);
+    btnPi->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_PI_Clicked),NULL, this);
+    btnPourcent->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_POURCENT_Clicked),NULL, this);
+    btnPlus->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_PLUS_Clicked),NULL, this);
+    btnVirgule->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_VIRGULE_Clicked),NULL, this);
+    btnEnter->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_ENTER_Clicked),NULL, this);
+    btnPuiss2->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_PUISS2_Clicked),NULL, this);
+    btnMC->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_MC_Clicked),NULL, this);
+    btnMoins->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_MOINS_Clicked),NULL, this);
+    btnClr->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_CLEAR_Clicked),NULL, this);
+    btnMR->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_MR_Clicked),NULL, this);
+    btnFois->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_FOIS_Clicked),NULL, this);
+    btnDel->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_DEL_Clicked),NULL, this);
+    btnMemPlus->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_MPLUS_Clicked),NULL, this);
+    btnDiviser->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_DIV_Clicked),NULL, this);
 }
 
 MyFrame::~MyFrame()
 {
     btn0->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_0_Clicked),NULL, this);
+    btn1->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_1_Clicked),NULL, this);
+    btn2->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_2_Clicked),NULL, this);
+    btn3->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_3_Clicked),NULL, this);
+    btn4->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_4_Clicked),NULL, this);
+    btn5->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_5_Clicked),NULL, this);
+    btn6->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_6_Clicked),NULL, this);
+    btn7->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_7_Clicked),NULL, this);
+    btn8->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_8_Clicked),NULL, this);
+    btn9->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_9_Clicked),NULL, this);
+    btnEnter->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame::Touche_ENTER_Clicked),NULL, this);
 }
 
 void MyFrame::OnExit(wxCommandEvent& event)
@@ -120,8 +146,8 @@ void MyFrame::OnExit(wxCommandEvent& event)
 }
 void MyFrame::OnAbout(wxCommandEvent& event)
 {
-    wxMessageBox("This is a wxWidgets Hello World example",
-                 "About Hello World", wxOK | wxICON_INFORMATION);
+    wxMessageBox("Authors : Arnaud Queftaigne, Damien Virgiglio, Mathieu Fernandez, T. M.-F.",
+                 "About", wxOK | wxICON_INFORMATION);
 }
 void MyFrame::OnHello(wxCommandEvent& event)
 {
@@ -130,187 +156,256 @@ void MyFrame::OnHello(wxCommandEvent& event)
 
 /*-_-_-_-_-_-_-_-_-_-_-* BOUTON Operation *-_-_-_-_-_-_-_-_-_-_-*/
 
-//void MyFrame::Touche_FOIS_Clicked(wxCommandEvent &event)
-//{
-	//*BoxResult << ("x");
-	//calcul+="x";
-	
-//}
+void MyFrame::Touche_FOIS_Clicked(wxCommandEvent &event)
+{
+    // OBJECTIF : capturer le nombre dans l'afficheur pour l'empiler, calculer et afficher le résultat de la multiplication en mémoire
 
-//void MyFrame::Touche_DIV_Clicked(wxCommandEvent &event)
-//{
-	//*BoxResult <<("/");
-	//calcul+="/";
-//}
+    // On convertit la wxString en string standard
+    wxString temp_wxstring(BoxResult->GetValue());
+    std::string stlstring = std::string(temp_wxstring.mb_str());
 
-//void MyFrame::Touche_PLUS_Clicked(wxCommandEvent &event)
-//{
-	//*BoxResult <<("+");
-	//calcul+="+";
-//}
+    // On transforme la string en double et on l'empile dans my_calc
+    double number = stod(stlstring, NULL);
+    my_calc.pushNumber(number);
 
-//void MyFrame::Touche_MOINS_Clicked(wxCommandEvent &event)
-//{
-	//*BoxResult <<("-");
-	//calcul+="-";
-//}
+    BoxResult->Clear();
+    BoxResult->AppendText(my_calc.multiply());
+}
 
-//void MyFrame::Touche_PUISS2_Clicked(wxCommandEvent &event){
-	//*BoxResult <<("^2");
-	//calcul+="^2";
-//}
+void MyFrame::Touche_DIV_Clicked(wxCommandEvent &event)
+{
+    // OBJECTIF : capturer le nombre dans l'afficheur pour l'empiler, calculer et afficher le résultat de la division en mémoire
 
-//void MyFrame::Touche_PI_Clicked(wxCommandEvent &event)
-//{
-	//*BoxResult <<("3,14");
-	//calcul+="3,14";                                   
-//}
+    // On convertit la wxString en string standard
+    wxString temp_wxstring(BoxResult->GetValue());
+    std::string stlstring = std::string(temp_wxstring.mb_str());
 
-//void MyFrame::Touche_POURCENT_Clicked(wxCommandEvent &event)
-//{
-	//*BoxResult <<("%");
-	//calcul+="%";                                   
-//}
+    // On transforme la string en double et on l'empile dans my_calc
+    double number = stod(stlstring, NULL);
+    my_calc.pushNumber(number);
 
+    BoxResult->Clear();
+    BoxResult->AppendText(my_calc.divide());
+}
 
+void MyFrame::Touche_PLUS_Clicked(wxCommandEvent &event)
+{
+    // OBJECTIF : capturer le nombre dans l'afficheur pour l'empiler, calculer et afficher le résultat de l'addition en mémoire
 
+    // On convertit la wxString en string standard
+    wxString temp_wxstring(BoxResult->GetValue());
+    std::string stlstring = std::string(temp_wxstring.mb_str());
+
+    // On transforme la string en double et on l'empile dans my_calc
+    double number = stod(stlstring, NULL);
+    my_calc.pushNumber(number);
+
+    BoxResult->Clear();
+    BoxResult->AppendText(my_calc.add());
+}
+
+void MyFrame::Touche_MOINS_Clicked(wxCommandEvent &event)
+{
+    // OBJECTIF : capturer le nombre dans l'afficheur pour l'empiler, calculer et afficher le résultat de la soustraction en mémoire
+
+    // On convertit la wxString en string standard
+    wxString temp_wxstring(BoxResult->GetValue());
+    std::string stlstring = std::string(temp_wxstring.mb_str());
+
+    // On transforme la string en double et on l'empile
+    double number = stod(stlstring, NULL);
+    my_calc.pushNumber(number);
+
+    BoxResult->Clear();
+    BoxResult->WriteText(my_calc.substract());
+}
+
+void MyFrame::Touche_PUISS2_Clicked(wxCommandEvent &event)
+{
+    // OBJECTIF : capturer le nombre dans l'afficheur pour l'empiler et calculer son carré
+
+    // On convertit la wxString en string standard
+    wxString temp_wxstring(BoxResult->GetValue());
+    std::string stlstring = std::string(temp_wxstring.mb_str());
+
+    // On transforme la string en double et on l'empile
+    double number = stod(stlstring, NULL);
+    my_calc.pushNumber(number);
+
+    BoxResult->Clear();
+    BoxResult->WriteText(my_calc.square());
+}
+
+void MyFrame::Touche_PI_Clicked(wxCommandEvent &event)
+{
+    BoxResult->WriteText(std::to_string(3.141592));
+}
+
+void MyFrame::Touche_POURCENT_Clicked(wxCommandEvent &event)
+{
+}
 
 ////*-_-_-_-_-_-_-_-_-_-_-* BOUTON CHIFFRE *-_-_-_-_-_-_-_-_-_-_-*//
 
 void MyFrame::Touche_0_Clicked(wxCommandEvent &event)
 {
+    if (BoxResult->GetValue() == "0")
+        return;
+
+    if (my_calc.flagEnabled())
+        BoxResult->Clear();
+
     BoxResult->AppendText("0");
-    //BoxResult << "0";
-	//calcul+="0";
+    my_calc.flagDisable();
 }
 
-//void MyFrame::Touche_1_Clicked(wxCommandEvent &event)
-//{
-	//*BoxResult << "1";
-	//calcul+="1";
-//}
+void MyFrame::Touche_1_Clicked(wxCommandEvent &event)
+{
+    if (BoxResult->GetValue() == "0" || my_calc.flagEnabled())
+        BoxResult->Clear();
 
-//void MyFrame::Touche_2_Clicked(wxCommandEvent &event)
-//{
-	//*BoxResult << "2";
-	//calcul+="2";
-//}
+    BoxResult->AppendText("1");
+    my_calc.flagDisable();
+}
 
-//void MyFrame::Touche_3_Clicked(wxCommandEvent &event)
-//{
-	//*BoxResult << "3";
-	//calcul+="3";
-//}
+void MyFrame::Touche_2_Clicked(wxCommandEvent &event)
+{
+    if (BoxResult->GetValue() == "0" || my_calc.flagEnabled())
+        BoxResult->Clear();
 
-//void MyFrame::Touche_4_Clicked(wxCommandEvent &event)
-//{
-	//*BoxResult << "4";
-	//calcul+="4";
-//}
+    BoxResult->AppendText("2");
+    my_calc.flagDisable();
+}
 
-//void MyFrame::Touche_5_Clicked(wxCommandEvent &event)
-//{
-	//*BoxResult << "5";
-	//calcul+="5";
-//}
+void MyFrame::Touche_3_Clicked(wxCommandEvent &event)
+{
+    if (BoxResult->GetValue() == "0" || my_calc.flagEnabled())
+        BoxResult->Clear();
 
-//void MyFrame::Touche_6_Clicked(wxCommandEvent &event)
-//{
-	//*BoxResult << "6";
-	//calcul+="6";
-//}
+    BoxResult->AppendText("3");
+    my_calc.flagDisable();
+}
 
-//void MyFrame::Touche_7_Clicked(wxCommandEvent &event)
-//{
-	//*BoxResult << "7";
-	//calcul+="7";
-//}
+void MyFrame::Touche_4_Clicked(wxCommandEvent &event)
+{
+    if (BoxResult->GetValue() == "0" || my_calc.flagEnabled())
+        BoxResult->Clear();
 
-//void MyFrame::Touche_8_Clicked(wxCommandEvent &event)
-//{
-	//*BoxResult << "8";
-	//calcul+="8";
-//}
+    BoxResult->AppendText("4");
+    my_calc.flagDisable();
+}
 
-//void MyFrame::Touche_9_Clicked(wxCommandEvent &event)
-//{
-	//*BoxResult << "9";
-	//calcul+="9";
-//}
+void MyFrame::Touche_5_Clicked(wxCommandEvent &event)
+{
+    if (BoxResult->GetValue() == "0" || my_calc.flagEnabled())
+        BoxResult->Clear();
 
-//void MyFrame::Touche_VIRGULE_Clicked(wxCommandEvent &event)
-//{
-	//*BoxResult << (",");
-	//calcul+=",";
-//}
+    BoxResult->AppendText("5");
+    my_calc.flagDisable();
+}
+
+void MyFrame::Touche_6_Clicked(wxCommandEvent &event)
+{
+    if (BoxResult->GetValue() == "0" || my_calc.flagEnabled())
+        BoxResult->Clear();
+
+    BoxResult->AppendText("6");
+    my_calc.flagDisable();
+}
+
+void MyFrame::Touche_7_Clicked(wxCommandEvent &event)
+{
+    if (BoxResult->GetValue() == "0" || my_calc.flagEnabled())
+        BoxResult->Clear();
+
+    BoxResult->AppendText("7");
+    my_calc.flagDisable();
+}
+
+void MyFrame::Touche_8_Clicked(wxCommandEvent &event)
+{
+    if (BoxResult->GetValue() == "0" || my_calc.flagEnabled())
+        BoxResult->Clear();
+    BoxResult->AppendText("8");
+    my_calc.flagDisable();
+}
+
+void MyFrame::Touche_9_Clicked(wxCommandEvent &event)
+{
+    if (BoxResult->GetValue() == "0" || my_calc.flagEnabled())
+        BoxResult->Clear();
+
+    BoxResult->AppendText("9");
+    my_calc.flagDisable();
+}
+
+void MyFrame::Touche_VIRGULE_Clicked(wxCommandEvent &event)
+{
+    if (my_calc.flagEnabled())
+    {
+        BoxResult->Clear();
+        BoxResult->AppendText("0");
+    }
+
+    BoxResult->AppendText(".");
+    my_calc.flagDisable();
+}
 
 
 /*-_-_-_-_-_-_-_-_-_-_-*BOUTON M *-_-_-_-_-_-_-_-_-_-_-*/
-/*
 
 void MyFrame::Touche_MC_Clicked(wxCommandEvent &event)
 {
-	//La touche MC permet d’effacer la mémoire.
-	if(!save.empty())
-		{save.clear();}
-		btnClr->Disable();
-		btnMR->Disable();
-	//Penser à déactiver un bouton MC dans le cas où y a rien dans la mémoire (regarder comment le déactiver )
-	
+    // OBJECTIF : vider la pile mémoire de Calculator
+
+    my_calc.flushStack();
 }
 
 void MyFrame::Touche_MPLUS_Clicked(wxCommandEvent &event)
-{ 
-	//La touche M+ permet d’ajouter le nombre actuellement affiché sur l'écran de la calculatrice à la mémoire
-	double val;
-	if(*BoxResult->GetValue() .ToDouble(&val))
-    {   
-	 	if(!save.empty()){
-	    		save.clear();                        //effacer le contenu de la chaine si la varaibale save n'est pas vide.
-	    	}
-	    	save <<val;
-	    btnClr->Enable();
-   		btnMR->Enable();
-	}	
+{
+    // OBJECTIF : capturer le nombre dans l'afficheur pour l'ajouter au nombre du haut de la pile
+
+    // On convertit la wxString en string standard
+    wxString temp_wxstring(BoxResult->GetValue());
+    std::string stlstring = std::string(temp_wxstring.mb_str());
+
+    // On transforme la string en double et on l'ajoute au dernier nombre en mémoire
+    double number = stod(stlstring, NULL);
+    my_calc.addToTop(number);
 }
 
 void MyFrame::Touche_MR_Clicked(wxCommandEvent &event)
 {
-
-	 //La touche MR permet d'afficher la valeur de la mémoire
-   *BoxResult->SetValue(save);
-   calcul+=save; //sauvgarder l'element stoker en mémoire dans Calcul
+    //OBJECTIF : afficher le dernier nombre en mémoire dans la pile
+    BoxResult->Clear();
+    BoxResult->AppendText(my_calc.displayTop());
 }
 
-
-
-
-
 /*-_-_-_-_-_-_-_-_-_-_-* BOUTON AUTRES *-_-_-_-_-_-_-_-_-_-_-*/
-/*
+
 void MyFrame::Touche_DEL_Clicked(wxCommandEvent &event)
 {
-	if(!calcul.empty()){
-		calcul.pop_back();
-		*BoxResult->Clear();
-		*BoxResult->Append->calcul;	
-	}
-	
+    // OBJECTIF : effacer le dernier caractère tapé
+
+    BoxResult->Undo();
 }
 
 void MyFrame::Touche_CLEAR_Clicked(wxCommandEvent &event)
 {
-	*BoxResult->Clear();
-	calcul.clear();
+    // OBJECTIF : réinitialiser la zone d'affichage sans toucher à la mémoire
+    BoxResult->Clear();
+    BoxResult->AppendText("0");
 }
 
-void MyFrame::Touche_EGALE_Clicked(wxCommandEvent &event)
+void MyFrame::Touche_ENTER_Clicked(wxCommandEvent &event)
 {
-	if(!calcul.empty()){
-		Calculator c(calcul); //Effectue le calcul
-		BoxResult->Clear(); //Efface la zone d'affichage
-		BoxResult <<c.getResult(); //Affiche le resultat
-		calcul=c.getResult(); //Stock le resultat dans calcul pour faire un nouveau calcul avec le resultat
-	}
+    // OBJECTIF : capturer le nombre dans l'afficheur pour l'empiler dans Calculator
+
+    // On convertit la wxString en string standard
+    wxString temp_wxstring(BoxResult->GetValue());
+    std::string stlstring = std::string(temp_wxstring.mb_str());
+
+    // On transforme la string en double et on l'empile
+    double number = stod(stlstring, NULL);
+    my_calc.pushNumber(number);
 }
-*/

@@ -2,6 +2,7 @@
 #ifndef WX_PRECOMP
     #include <wx/wx.h>
 #endif
+
 class MyApp : public wxApp
 {
 public:
@@ -44,8 +45,9 @@ protected:
     void Touche_MPLUS_Clicked(wxCommandEvent &event);
     void Touche_MC_Clicked(wxCommandEvent &event);
     void Touche_MR_Clicked(wxCommandEvent &event);
-    
-    wxButton *btnDel,*btnClr,*btnEgale;                              
+    void Touche_ENTER_Clicked(wxCommandEvent &event);
+
+    wxButton *btnDel,*btnClr,*btnEnter;
 	wxButton *btnFois,*btnDiviser,*btnPlus,*btnMoins, *btnPi, *btnPuiss2, *btnPourcent;        
 	wxButton *btn0,*btn1,*btn2,*btn3,*btn4,*btn5,*btn6,*btn7,*btn8,*btn9,*btnVirgule;
 	wxButton *btnMemPlus, *btnMR, *btnMC;
@@ -61,7 +63,7 @@ enum
     ID_BT_DIVISER, ID_BT_PLUS,ID_BT_FOIS, ID_BT_MOINS, ID_BT_PI, ID_BT_POURCENT, ID_BT_PUISS2,
     ID_BT_MC,ID_BT_MR,ID_BT_MPLUS,
     ID_BT_0, ID_BT_1, ID_BT_2, ID_BT_3, ID_BT_4, ID_BT_5, ID_BT_6, ID_BT_7, ID_BT_8, ID_BT_9, ID_BT_VIRGULE,
-    ID_BT_DEL, ID_BT_CLR, ID_BT_EGALE,
+    ID_BT_DEL, ID_BT_CLR, ID_BT_ENTER,
 
     ID_BOXR
 };
