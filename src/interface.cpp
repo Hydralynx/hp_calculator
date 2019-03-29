@@ -19,8 +19,8 @@ bool MyApp::OnInit()
 {   
     // Création de l'objet calculatrice
 	// Création de la fenetre avec définition de la Taille et positionnement de la fenetre sur l'écran
-    //MyFrame *frame = new MyFrame("RPN Calculator", wxPoint(50, 50), wxSize(370, 165), wxDEFAULT_FRAME_STYLE & ~(wxRESIZE_BORDER));
-    MyFrame *frame = new MyFrame("RPN Calculator", wxPoint(50, 50), wxSize(370, 165));
+    MyFrame *frame = new MyFrame("RPN Calculator", wxPoint(50, 50), wxSize(370, 165), wxDEFAULT_FRAME_STYLE & ~(wxRESIZE_BORDER));
+    //MyFrame *frame = new MyFrame("RPN Calculator", wxPoint(50, 50), wxSize(370, 165));
 	// Fonction permettant d'afficher la fenêtre
     frame->Show(true);
     return true;
