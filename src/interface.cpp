@@ -257,7 +257,7 @@ void MyFrame::Touche_POURCENT_Clicked(wxCommandEvent &event)
 
 void MyFrame::Touche_0_Clicked(wxCommandEvent &event)
 {
-    if (BoxResult->GetValue() == "0" || my_calc.enterFlagEnabled())
+    if (BoxResult->GetValue() == "0")
         return;
 
     if (my_calc.enterFlagEnabled())
