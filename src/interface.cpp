@@ -428,7 +428,10 @@ void MyFrame::Touche_DEL_Clicked(wxCommandEvent &event)
             BoxResult->AppendText(sTemp);
     }
     else
+    {
+        BoxResult->Clear();
         BoxResult->AppendText("0");
+    }
 }
 
 void MyFrame::Touche_CLEAR_Clicked(wxCommandEvent &event)
