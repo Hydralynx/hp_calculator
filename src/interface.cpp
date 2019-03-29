@@ -398,7 +398,7 @@ void MyFrame::Touche_MC_Clicked(wxCommandEvent &event)
 void MyFrame::Touche_MPLUS_Clicked(wxCommandEvent &event)
 {
     wxString sTemp = BoxResult->GetValue();
-    if (sTemp != "" || sTemp != "ERROR")
+    if (sTemp != "" && sTemp != "ERROR")
     {
         wxString temp_wxstring(BoxResult->GetValue());
         std::string stlstring = std::string(temp_wxstring.mb_str());
