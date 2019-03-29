@@ -400,8 +400,6 @@ void MyFrame::Touche_MPLUS_Clicked(wxCommandEvent &event)
         std::string stlstring = std::string(temp_wxstring.mb_str());
         double number = stod(stlstring, NULL);
         my_calc.addToTop(number);
-        BoxResult->Clear();
-        my_calc.displayTop();
     }
 
 }
@@ -421,7 +419,11 @@ void MyFrame::Touche_DEL_Clicked(wxCommandEvent &event)
     wxString sTemp = BoxResult->GetValue();
     sTemp.RemoveLast();
     BoxResult->Clear();
-    BoxResult->AppendText(sTemp);
+
+    if(sTemp == "")
+        BoxResult->AppendText("0");
+    else
+        BoxResult->AppendText(sTemp);
 }
 
 void MyFrame::Touche_CLEAR_Clicked(wxCommandEvent &event)
