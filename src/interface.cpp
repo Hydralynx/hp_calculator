@@ -161,7 +161,7 @@ void MyFrame::OnHello(wxCommandEvent& event)
 void MyFrame::Touche_FOIS_Clicked(wxCommandEvent &event)
 {
     // Si on n'a pas fait d'opération juste avant
-    if (!my_calc.operatorFlagEnabled())
+    if (!my_calc.operatorFlagEnabled() && BoxResult->GetValue() != "ERROR")
     {
         // On convertit la wxString en string standard
         wxString temp_wxstring(BoxResult->GetValue());
@@ -177,7 +177,7 @@ void MyFrame::Touche_FOIS_Clicked(wxCommandEvent &event)
 
 void MyFrame::Touche_DIV_Clicked(wxCommandEvent &event)
 {
-    if (!my_calc.operatorFlagEnabled())
+    if (!my_calc.operatorFlagEnabled() && BoxResult->GetValue() != "ERROR")
     {
         wxString temp_wxstring(BoxResult->GetValue());
         std::string stlstring = std::string(temp_wxstring.mb_str());
@@ -191,7 +191,7 @@ void MyFrame::Touche_DIV_Clicked(wxCommandEvent &event)
 
 void MyFrame::Touche_PLUS_Clicked(wxCommandEvent &event)
 {
-    if (!my_calc.operatorFlagEnabled())
+    if (!my_calc.operatorFlagEnabled() && BoxResult->GetValue() != "ERROR")
     {
         wxString temp_wxstring(BoxResult->GetValue());
         std::string stlstring = std::string(temp_wxstring.mb_str());
@@ -205,7 +205,7 @@ void MyFrame::Touche_PLUS_Clicked(wxCommandEvent &event)
 
 void MyFrame::Touche_MOINS_Clicked(wxCommandEvent &event)
 {
-    if (!my_calc.operatorFlagEnabled())
+    if (!my_calc.operatorFlagEnabled() && BoxResult->GetValue() != "ERROR")
     {
         wxString temp_wxstring(BoxResult->GetValue());
         std::string stlstring = std::string(temp_wxstring.mb_str());
@@ -219,7 +219,7 @@ void MyFrame::Touche_MOINS_Clicked(wxCommandEvent &event)
 
 void MyFrame::Touche_PUISS2_Clicked(wxCommandEvent &event)
 {
-    if (!my_calc.operatorFlagEnabled())
+    if (!my_calc.operatorFlagEnabled() && BoxResult->GetValue() != "ERROR")
     {
         wxString temp_wxstring(BoxResult->GetValue());
         std::string stlstring = std::string(temp_wxstring.mb_str());
@@ -241,7 +241,7 @@ void MyFrame::Touche_PI_Clicked(wxCommandEvent &event)
 
 void MyFrame::Touche_POURCENT_Clicked(wxCommandEvent &event)
 {
-    if (!my_calc.operatorFlagEnabled())
+    if (!my_calc.operatorFlagEnabled() && BoxResult->GetValue() != "ERROR")
     {
         wxString temp_wxstring(BoxResult->GetValue());
         std::string stlstring = std::string(temp_wxstring.mb_str());
@@ -394,7 +394,7 @@ void MyFrame::Touche_MC_Clicked(wxCommandEvent &event)
 void MyFrame::Touche_MPLUS_Clicked(wxCommandEvent &event)
 {
     wxString sTemp = BoxResult->GetValue();
-    if (sTemp != "")
+    if (sTemp != "" || sTemp != "ERROR")
     {
         wxString temp_wxstring(BoxResult->GetValue());
         std::string stlstring = std::string(temp_wxstring.mb_str());
