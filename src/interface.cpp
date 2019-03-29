@@ -393,12 +393,17 @@ void MyFrame::Touche_MC_Clicked(wxCommandEvent &event)
 
 void MyFrame::Touche_MPLUS_Clicked(wxCommandEvent &event)
 {
-    wxString temp_wxstring(BoxResult->GetValue());
-    std::string stlstring = std::string(temp_wxstring.mb_str());
-    double number = stod(stlstring, NULL);
-    my_calc.addToTop(number);
-    BoxResult->Clear();
-    my_calc.displayTop();
+    wxString sTemp = BoxResult->GetValue();
+    if (sTemp != "")
+    {
+        wxString temp_wxstring(BoxResult->GetValue());
+        std::string stlstring = std::string(temp_wxstring.mb_str());
+        double number = stod(stlstring, NULL);
+        my_calc.addToTop(number);
+        BoxResult->Clear();
+        my_calc.displayTop();
+    }
+
 }
 
 void MyFrame::Touche_MR_Clicked(wxCommandEvent &event)
