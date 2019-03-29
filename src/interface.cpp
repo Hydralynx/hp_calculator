@@ -383,7 +383,11 @@ void MyFrame::Touche_MC_Clicked(wxCommandEvent &event)
     // OBJECTIF : vider la pile mémoire de Calculator
 
     if (BoxResult->GetValue() == "ERROR")
+    {
         BoxResult->Clear();
+        BoxResult->AppendText("0");
+    }
+
 
     my_calc.flushStack();
 
@@ -456,7 +460,6 @@ void MyFrame::Touche_ENTER_Clicked(wxCommandEvent &event)
         double number = stod(stlstring, NULL);
         my_calc.pushNumber(number);
     }
-
 }
 
 #endif
