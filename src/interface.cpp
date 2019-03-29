@@ -417,13 +417,18 @@ void MyFrame::Touche_DEL_Clicked(wxCommandEvent &event)
 {
     // OBJECTIF : effacer le dernier caractère tapé
     wxString sTemp = BoxResult->GetValue();
-    sTemp.RemoveLast();
-    BoxResult->Clear();
+    if (sTemp != "ERROR")
+    {
+        sTemp.RemoveLast();
+        BoxResult->Clear();
 
-    if(sTemp == "")
-        BoxResult->AppendText("0");
+        if(sTemp == "")
+            BoxResult->AppendText("0");
+        else
+            BoxResult->AppendText(sTemp);
+    }
     else
-        BoxResult->AppendText(sTemp);
+        BoxResult->AppendText("0");
 }
 
 void MyFrame::Touche_CLEAR_Clicked(wxCommandEvent &event)
